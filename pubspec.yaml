@@ -1,4 +1,4 @@
-name: curve25519_VRF
+name: curve25519_vrf
 version: 1.0.0
 description:
   Curve25519 Library for cryptographic signing and verifying. Supports VRF signatures and agreements.

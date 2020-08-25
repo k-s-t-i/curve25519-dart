@@ -4,7 +4,7 @@ environment:
   sdk: '>=2.8.1 <3.0.0'
 
 dependencies:
-  curve25519_VRF:
+  curve25519_vrf:
     path: '..'
   pointycastle:
   collection:

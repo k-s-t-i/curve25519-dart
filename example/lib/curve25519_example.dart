@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:curve25519_VRF/curve25519.dart';
+import 'package:curve25519_vrf/curve25519_vrf.dart';
 
 void main() {
   var message = Uint8List.fromList('This is a very important message!'.codeUnits);

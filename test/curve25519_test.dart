@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
-import 'package:curve25519_VRF/curve25519.dart';
-import 'package:curve25519_VRF/src/constants.dart';
-import 'package:curve25519_VRF/src/ed25519.dart';
+import 'package:curve25519_vrf/curve25519_vrf.dart';
+import 'package:curve25519_vrf/src/constants.dart';
+import 'package:curve25519_vrf/src/ed25519.dart';
 
 
 void main() {
