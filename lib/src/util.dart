@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:curve25519/curve25519.dart';
+import 'package:curve25519_VRF/curve25519.dart';
 import 'package:pointycastle/pointycastle.dart' hide Signature, PublicKey, PrivateKey;
 
 import 'constants.dart';
