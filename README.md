@@ -4,12 +4,13 @@ A native Dart Library for Curve25519 suite, including x25519 key pairs, shared s
 ## Installing
 
 ```
-import 'curve25519/curve25519.dart';
+import 'curve25519_vrf/curve25519_vrf.dart';
 ```
 
 The package requires the following dependencies:
 ```$xslt
 dependencies:
+   curve25519_vrf: ^1.0.0
   pointycastle:
   collection:
 ```
