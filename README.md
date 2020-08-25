@@ -10,7 +10,7 @@ import 'curve25519_vrf/curve25519_vrf.dart';
 The package requires the following dependencies:
 ```$xslt
 dependencies:
-   curve25519_vrf: ^1.0.0
+  curve25519_vrf: ^1.0.0
   pointycastle:
   collection:
 ```
