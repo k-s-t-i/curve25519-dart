@@ -4,7 +4,6 @@ import 'ed25519.dart';
 
 class Constants {
 
-  /// VRF Generation constants
   static final int PUBLICKEYLENGTH = 32;
   static final int PRIVATEKEYLENGTH = 32;
   static final int LABELSETMAXLEN = 512;
@@ -21,7 +20,6 @@ class Constants {
   static final int MSTART = 2048;
   static final int MSGMAXLEN = 1048576;
 
-  /// Elligator constant
   static final Uint8List aBytes = Uint8List.fromList([
     0x06,  0x7e,  0x45,  0xff,  0xaa,  0x04,  0x6e,  0xcc,
     0x82,  0x1a,  0x7d,  0x4b,  0xd1,  0xd3,  0xa1,  0xc5,
@@ -29,7 +27,6 @@ class Constants {
     0xbb,  0x06,  0xa0,  0x60,  0xf4,  0xed,  0x26,  0x0f
   ]);
 
-  /// Used in calculation of Bv point
   static final Uint8List bBytes = Uint8List.fromList([
     0x58, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
     0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,

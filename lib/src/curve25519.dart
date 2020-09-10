@@ -9,8 +9,10 @@ import 'util.dart';
 
 class Curve25519 {
 
+  /// Empty Constructor
   Curve25519();
 
+  /// Generate new x25519 KeyPair
   KeyPair newKeyPair() {
 
     var privateKeyBytes = Rand().randomBytes(32);
@@ -32,12 +34,14 @@ class Curve25519 {
     return KeyPair(publicKey, privateKey);
   }
 
+  /// Calculate shared agreement between A: keyPair and B: other
   Uint8List calculateAgreement(KeyPair keyPair, PublicKey publicKey) {
 
     return Uint8List.fromList(Scalar(keyPair.privateKey.bytes).scarlarMult(publicKey.bytes));
 
   }
 
+  /// Sign byte message message using keyPair
   Signature sign(KeyPair keyPair, Uint8List message, SignatureType type) {
     var messageBytes = Int8List.fromList(message);
     if (keyPair == null) {
@@ -65,13 +69,17 @@ class Curve25519 {
       return signature;
     }
 
-    throw Exception("Signature Could not be generated at this time");
+    throw Exception('Signature Could not be generated at this time');
   }
 
+  /// Verify Signature
+  /// Boolean return for STANDARD SignatureType
+  /// False for failure if VRF SignatureType
+  /// VRF output byte array if true for VRF SignatureType
   dynamic verify(Uint8List message, Signature signature) {
     var messageBytes = Int8List.fromList(message);
     if (signature.publicKey == null) {
-      throw Exception("Public Key is invalid!");
+      throw Exception('Public Key is invalid!');
     }
     if (messageBytes == null || messageBytes.isEmpty) {
       return false;
@@ -195,7 +203,7 @@ class Curve25519 {
     List.copyRange(mBuf, Constants.MSTART, message);
 
     var labelset = Labelset();
-    var ret = labelset.add(labelset.length, "1".codeUnits);
+    var ret = labelset.add(labelset.length, '1'.codeUnits);
     if (ret != 0) {
       return null;
     }
@@ -210,7 +218,7 @@ class Curve25519 {
     var bvBytes = Bv.toBytes();
     var kvBytes = Kv.toBytes();
 
-    labelset.set(labelset.length - 1, "2".codeUnitAt(0));
+    labelset.set(labelset.length - 1, '2'.codeUnitAt(0));
 
     var extra = Int8List(3 * Constants.POINTLEN);
     List.copyRange(extra, 0, bvBytes);
@@ -267,7 +275,7 @@ class Curve25519 {
     }
 
     var labelset = Labelset();
-    labelset.add(labelset.length, "1".codeUnits);
+    labelset.add(labelset.length, '1'.codeUnits);
 
     var Bv = _calculateBv(labelset, edPublicKey, mBuf, message);
     if (Bv == null) {

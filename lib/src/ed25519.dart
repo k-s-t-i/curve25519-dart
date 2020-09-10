@@ -1,11 +1,9 @@
-import 'dart:ffi';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 
 import 'constants.dart';
-import 'util.dart';
 
 /// FieldElement represents an element of the field GF(2^255 - 19)
 class FieldElement extends UnmodifiableInt32ListView {
@@ -945,12 +943,14 @@ class FieldElement extends UnmodifiableInt32ListView {
     return um1 * up1;
   }
 
+  /// Field Element isNegative
   bool isNegative() {
     var copy = FieldElement()..insertAll(0, this);
     var s = copy.toBytes();
     return s[0] & 1 == 1;
   }
 
+  /// Check if Legendre Polynomial of Field Element is non square
   int legendreIsNonSquare() {
 
     var temp = pow22523();
@@ -964,6 +964,7 @@ class FieldElement extends UnmodifiableInt32ListView {
     return 1 & bytes[31];
   }
 
+  /// Convert montgomery X point to Extended Group Element
   ExtendedGroupElement montXToExtended(int signBit) {
 
     var A = FieldElement.fromBytes(Constants.aBytes);
@@ -1007,6 +1008,7 @@ class ProjectiveGroupElement {
         Y = Y ?? FieldElement(),
         Z = Z ?? FieldElement();
 
+  /// Multiply ExtendedGroupElement by Scalar and store in Projective Group Element
   ProjectiveGroupElement scalarMult(List<int> a, ExtendedGroupElement A, List<int> b) {
 
     var out = ProjectiveGroupElement.zero();
@@ -1062,6 +1064,7 @@ class ProjectiveGroupElement {
     return out;
   }
 
+  /// Convert List<int> to 256-bit array
   Int8List slide(List<int> a) {
     var r = Int8List(256);
 
@@ -1095,6 +1098,7 @@ class ProjectiveGroupElement {
     return r;
   }
 
+  /// Projective Group Element to Completed
   CompletedGroupElement dblToCompleted() {
     var out = CompletedGroupElement();
 
@@ -1113,6 +1117,7 @@ class ProjectiveGroupElement {
     return out;
   }
 
+  /// Projective to Bytes
   List<int> toBytes() {
 
     var reciprocal = Z.invert();
@@ -1150,6 +1155,7 @@ class ExtendedGroupElement {
         Z = Z ?? FieldElement(),
         T = T ?? FieldElement();
 
+  /// Instantiate from Bytes and Negate
   factory ExtendedGroupElement.fromBytesNeg(List<int> bytes) {
 
     var out = ExtendedGroupElement();
@@ -1197,6 +1203,7 @@ class ExtendedGroupElement {
     return out;
   }
 
+  /// Multiply Scalar by 25519 Base point and store in Extended Group Element
   factory ExtendedGroupElement.scalarMultBase(List<int> a) {
     var e = Int8List(64);
     var r = CompletedGroupElement();
@@ -1236,6 +1243,7 @@ class ExtendedGroupElement {
     return h;
   }
 
+  /// Add Cached GE to Extended GE and return Completed GE
   CompletedGroupElement operator + (CachedGroupElement other) {
 
     var out = CompletedGroupElement();
@@ -1257,6 +1265,7 @@ class ExtendedGroupElement {
     return out;
   }
 
+  /// subtract Cached GE from Extended GE and return Completed GE
   CompletedGroupElement operator - (CachedGroupElement other) {
 
     var out = CompletedGroupElement();
@@ -1278,12 +1287,18 @@ class ExtendedGroupElement {
     return out;
   }
 
+  /// Add 2 Extended Group Elements
   ExtendedGroupElement add(ExtendedGroupElement other) {
     var cached = toCached();
     var p1p1 = other + cached;
     return p1p1.toExtended();
   }
 
+  /// Choose Extended Group Element depending on int b
+  /// if b == 1:
+  ///   move u to this
+  /// if b == 0:
+  ///   do nothing
   void cmovExtended(ExtendedGroupElement u, int b) {
     X.cmov(u.X, b);
     Y.cmov(u.Y, b);
@@ -1291,11 +1306,13 @@ class ExtendedGroupElement {
     T.cmov(u.T, b);
   }
 
+  /// Extended GE to Completed
   CompletedGroupElement dblToCompleted() {
     var b = toProjective();
     return b.dblToCompleted();
   }
 
+  /// Negate GE
   ExtendedGroupElement neg() {
     var out = ExtendedGroupElement();
 
@@ -1307,6 +1324,7 @@ class ExtendedGroupElement {
     return out;
   }
 
+  /// Extended GE to bytes
   Int8List toBytes() {
     var recip = FieldElement();
     var x = FieldElement();
@@ -1327,6 +1345,7 @@ class ExtendedGroupElement {
     return s;
   }
 
+  /// Extended GE to Cached GE
   CachedGroupElement toCached() {
     var out = CachedGroupElement();
 
@@ -1338,10 +1357,12 @@ class ExtendedGroupElement {
     return out;
   }
 
+  /// Extended GE to projective GE
   ProjectiveGroupElement toProjective() {
     return ProjectiveGroupElement(X, Y, Z);
   }
 
+  /// Multiply Scalar a with Extended GE A and store in Extended GE
   ExtendedGroupElement scalarMult(List<int> a, ExtendedGroupElement A) {
 
     var q = ExtendedGroupElement.zero();
@@ -1373,6 +1394,8 @@ class ExtendedGroupElement {
     return q;
   }
 
+  /// Check if Extended Group Element is Neutral Point
+  /// Neutral Point where X == FieldElement.zero() and Y == Z
   bool isNeutral() {
 
     var zero = FieldElement.zero();
@@ -1380,6 +1403,7 @@ class ExtendedGroupElement {
     return (X == zero && Y == Z);
   }
 
+  /// Scalar Multiplication
   ExtendedGroupElement scalarMultCofactor() {
 
     var p1p1 = dblToCompleted();
@@ -1411,6 +1435,7 @@ class CompletedGroupElement {
         Z = Z ?? FieldElement(),
         T = T ?? FieldElement();
 
+  /// Mixed Add
   CompletedGroupElement mAdd(ExtendedGroupElement a, PreComputedGroupElement b) {
     var out = CompletedGroupElement(X, Y, Z, T);
     var t0 = FieldElement();
@@ -1431,6 +1456,7 @@ class CompletedGroupElement {
     return out;
   }
 
+  /// Completed GE to Extended GE
   ExtendedGroupElement toExtended() {
     var out = ExtendedGroupElement();
     out.X = X * T;
@@ -1440,6 +1466,7 @@ class CompletedGroupElement {
     return out;
   }
 
+  /// Completed GE to Projective GE
   ProjectiveGroupElement toProjective() {
     var out = ProjectiveGroupElement();
     out.X = X * T;
@@ -1448,6 +1475,7 @@ class CompletedGroupElement {
     return out;
   }
 
+  /// Mixed Subtraction
   CompletedGroupElement mSub(ExtendedGroupElement p, PreComputedGroupElement q) {
 
     var out = CompletedGroupElement();
@@ -1485,6 +1513,7 @@ class PreComputedGroupElement {
         yMinusX = yMinusX ?? FieldElement(),
         xy2d    = xy2d    ?? FieldElement();
 
+  /// Scalar Mult Base helper function
   PreComputedGroupElement select(int pos, int b) {
     var out = PreComputedGroupElement.zero();
     var negT = PreComputedGroupElement();
@@ -1503,16 +1532,19 @@ class PreComputedGroupElement {
     return out;
   }
 
+  /// Scalar Mult Base helper function
   void cmov(PreComputedGroupElement u, int b){
     yPlusX.cmov(u.yPlusX, b);
     yMinusX.cmov(u.yMinusX, b);
     xy2d.cmov(u.xy2d, b);
   }
 
+  /// Scalar Mult Base helper function
   int negative(int b){
     return (b >> 63) & 0x01;
   }
 
+  /// Scalar Mult Base helper function
   int equals(int b, int c) {
     var x = b ^ c;
     x--;
@@ -1536,6 +1568,7 @@ class CachedGroupElement {
         Z = Z ?? FieldElement(),
         T2d     = T2d     ?? FieldElement();
 
+  /// Instantiate Cached GE from Extended GE
   factory CachedGroupElement.fromExtended(ExtendedGroupElement a) {
     var out = CachedGroupElement();
     out.yPlusX = a.Y + a.X;
@@ -1548,6 +1581,7 @@ class CachedGroupElement {
 
 }
 
+/// Store Scalars with byte array representation
 class Scalar extends UnmodifiableInt8ListView {
 
   Int8List _data;
@@ -1555,19 +1589,19 @@ class Scalar extends UnmodifiableInt8ListView {
 
   Int8List get data => _data;
 
-
   Scalar([List<int> list, int length]) :
         _data = Int8List.fromList(list ?? Int8List(64)),
         _length = length ?? 64,
         super(Int8List.fromList(list ?? Int8List(64)));
 
+  /// Get index in Scalar
   @override
   int operator [] (int index) {
     assert(index < _data.length);
     return _data.elementAt(index);
   }
 
-  /// Set index in FieldElement
+  /// Set index in Scalar
   @override
   void operator []= (int index, int element) {
     assert(index < _length);
@@ -1576,7 +1610,7 @@ class Scalar extends UnmodifiableInt8ListView {
     _data = Int8List.fromList(data);
   }
 
-  /// Insert iterable into FieldElement at index
+  /// Insert iterable into Scalar at index
   @override
   void insertAll(int index, Iterable<int> iterable) {
     assert(index + iterable.length <= _length);
@@ -1585,6 +1619,11 @@ class Scalar extends UnmodifiableInt8ListView {
     _data = Int8List.fromList(data);
   }
 
+  /// Choose move for Scalar
+  /// if b == 1:
+  ///   store this in a
+  /// if b == 0:
+  ///   do nothing
   void cmov(Scalar a, int b) {
     var count=32;
     var x =  Int8List(32);
@@ -1596,6 +1635,8 @@ class Scalar extends UnmodifiableInt8ListView {
     }
   }
 
+  /// reduction helper function
+  /// convert bytes to int64
   int load3(List<int> bytesIn, int index) {
     var result =  bytesIn[index + 0]        & 0xFF;
     result    |= (bytesIn[index + 1] << 8 ) & 0xFF00;
@@ -1603,6 +1644,8 @@ class Scalar extends UnmodifiableInt8ListView {
     return result;
   }
 
+  /// reduction helper function
+  /// convert bytes to int64
   int load4(List<int> bytesIn, int index) {
     var result =  bytesIn[index + 0]        & 0xFF;
     result    |= (bytesIn[index + 1] << 8)  & 0xFF00;
@@ -1611,6 +1654,7 @@ class Scalar extends UnmodifiableInt8ListView {
     return result;
   }
 
+  /// reduce Scalar to 512 bits
   List<int> reduction() {
     var s0 = 2097151 & load3(_data, 0);
     var s1 = 2097151 & (load4(_data, 2) >> 5);
@@ -1842,6 +1886,7 @@ class Scalar extends UnmodifiableInt8ListView {
     return reduced;
   }
 
+  /// Scalar Multiplcation then Addition
   List<int> mulAdd(Scalar b, Scalar c) {
     var aCopy = List<int>.from(_data);
     aCopy[0]  = 2097151 &  load3(aCopy, 0);
@@ -2141,7 +2186,7 @@ class Scalar extends UnmodifiableInt8ListView {
     return Int8List.fromList(out);
   }
 
-
+  /// Scalar Multiplcation of this * p
   Int8List scarlarMult(List<int> p) {
 
     var n = List<int>.from(_data);
@@ -2194,11 +2239,13 @@ class Scalar extends UnmodifiableInt8ListView {
     return x2.toBytes();
   }
 
+  /// negate Scalar
   List<int> neg() {
     var zero = Int8List(32);
     return mulAdd(Scalar(Constants.lMinus1), Scalar(zero));
   }
 
+  /// Check if Scalar information lost during reduction to 512 bits
   bool isReduced() {
     var strict = List<int>(64);
     strict.fillRange(0, 64, 0);
@@ -2217,6 +2264,7 @@ class Labelset {
   List<int> _data;
   int _length;
 
+  /// new Labelset using emoty customization label and protocol name
   Labelset() {
     var protocolname = Int8List.fromList("VEdDSA_25519_SHA512_Elligator2".codeUnits);
 
@@ -2231,6 +2279,7 @@ class Labelset {
   List<int> get data => _data;
   int get length => _length;
 
+  /// add label to labelset
   int add(int pos, List<int> label) {
     if (_length + label.length + 1 > Constants.LABELSETMAXLEN || label.length > Constants.LABELMAXLEN) {
       return -1;
@@ -2254,6 +2303,7 @@ class Labelset {
     return 0;
   }
 
+  /// check if labelset valid
   bool validate() {
 
     if (_data == null) {
@@ -2280,13 +2330,14 @@ class Labelset {
     return true;
   }
 
+  /// change labelset at pos to value
   void set(int pos, int value) {
     assert(pos < _length);
     _data[pos] = value;
   }
 
+  /// Check if labelset empty
   bool isEmpty() {
-
     if (_length != 3) {
       return false;
     }

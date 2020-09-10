@@ -7,6 +7,8 @@ import 'package:pointycastle/pointycastle.dart' hide Signature, PublicKey, Priva
 
 import 'constants.dart';
 
+/// Standard Signature (64 bits)
+/// VRF Signature (96 bits)
 enum SignatureType {
   STANDARD,
   VRF
@@ -16,10 +18,13 @@ class PublicKey {
 
   final List<int> _bytes;
 
+  /// Constructor from bytes
   PublicKey(this._bytes)
       : assert(_bytes != null),
         assert (_bytes.length == Constants.PUBLICKEYLENGTH);
 
+  /// Returns true of this == other
+  @override
   bool operator == (other) =>
       other is PublicKey &&
           const ListEquality<int>().equals(_bytes, other._bytes);
@@ -31,10 +36,13 @@ class PrivateKey {
 
   final List<int> _bytes;
 
+  /// Constructor from bytes
   PrivateKey(this._bytes)
       : assert(_bytes != null),
         assert (_bytes.length == Constants.PRIVATEKEYLENGTH);
 
+  /// Returns true of this == other
+  @override
   bool operator == (other) =>
       other is PublicKey &&
           const ListEquality<int>().equals(_bytes, other.bytes);
@@ -47,10 +55,13 @@ class KeyPair {
   final PublicKey _publicKey;
   final PrivateKey _privateKey;
 
+  /// Constructor from PublicKey and PrivateKey objects
   KeyPair(this._publicKey, this._privateKey)
       : assert(_publicKey != null),
         assert(_privateKey != null);
 
+  /// Returns true if PublicKey and PrivateKey equal
+  @override
   bool operator == (other) =>
       other is KeyPair &&
           _publicKey == other.publicKey &&
@@ -67,6 +78,8 @@ class Signature {
   final PublicKey _publicKey;
   final SignatureType _type;
 
+  /// Constructor from Bytes and Signing PublicKey
+  /// Does not store message
   const Signature([List<int> bytes, PublicKey publicKey, SignatureType type])
       : assert(bytes != null),
         assert(publicKey != null),
@@ -81,6 +94,8 @@ class Signature {
 
   SignatureType get type => _type;
 
+  /// Returns true if signature bytes and publicKey identical
+  @override
   bool operator == (other) =>
       other is Signature &&
           const ListEquality<int>().equals(bytes, other.bytes) &&
@@ -96,11 +111,12 @@ class Sha512 {
 
   static Digest _d;
 
+  /// Instantiate digest scheme
   Sha512(){
     _d = Digest('SHA-512');
   }
 
-
+  /// Return Uint8List digest (512 bits)
   List<int> digest(List<int> bytes){
     var toHash = Uint8List.fromList(bytes);
     var b = _d.process(toHash);

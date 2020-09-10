@@ -10,15 +10,15 @@ import 'package:curve25519_vrf/src/ed25519.dart';
 
 void main() {
 
-  group("Constants", () {
+  group('Constants', () {
 
-    test("base", () {
+    test('base', () {
         expect(Constants.base.length == 32, isTrue);
         expect(Constants.base[0].length == 8, isTrue);
     });
   });
 
-  group("FieldElement", () {
+  group('FieldElement', () {
 
     FieldElement a;
     FieldElement b;
@@ -28,28 +28,28 @@ void main() {
       b = FieldElement.one();
     });
 
-    test("insertAll", (){
+    test('insertAll', (){
       var c = FieldElement();
       c.insertAll(0, b + b);
       expect(c.length == 10, isTrue);
       expect(c[0] == 2, isTrue);
     });
 
-    test("add", () {
+    test('add', () {
       expect(a + b == b, isTrue);
     });
 
-    test("subtract", () {
+    test('subtract', () {
       expect(b - b == a, isTrue);
     });
 
-    test("cmov", () {
+    test('cmov', () {
       var c = FieldElement.one();
       c.cmov(a, 0);
       expect(b == c, isTrue);
     });
 
-    test("fromBytes", () {
+    test('fromBytes', () {
       var bytes = List<int>(32)..fillRange(0, 32, 0);
       var fe = FieldElement.fromBytes(bytes);
       assert(fe.isZero, isTrue);
@@ -61,9 +61,9 @@ void main() {
   });
 
 
-  group("ExtendedGroupElement", () {
+  group('ExtendedGroupElement', () {
 
-    test("constructor", () {
+    test('constructor', () {
       var a = ExtendedGroupElement();
       expect(a.X.length == 10, isTrue);
       expect(a.Y.length == 10, isTrue);
@@ -71,37 +71,30 @@ void main() {
       expect(a.T.length == 10, isTrue);
     });
     
-    test("scalarMultVsScalarMultBase", () {
+    test('scalarMultVsScalarMultBase', () {
 
-      Uint8List bBytes = Uint8List.fromList([
+      var bBytes = Uint8List.fromList([
         0x58, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
         0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
         0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
         0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
       ]);
 
-      Uint8List miscBytes = Uint8List.fromList([
+      var miscBytes = Uint8List.fromList([
         0x57, 0x17, 0xfa, 0xce, 0xca, 0xb9, 0xdf, 0x0e,
         0x90, 0x67, 0xaa, 0x46, 0xba, 0x83, 0x2f, 0xeb,
         0x1c, 0x49, 0xd0, 0x21, 0xb1, 0x33, 0xff, 0x11,
         0xc9, 0x7a, 0xb8, 0xcf, 0xe3, 0x29, 0x46, 0x17,
       ]);
 
-      Uint8List qScalar = Uint8List.fromList([
+      var qScalar = Uint8List.fromList([
         0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
         0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
       ]);
 
-      Uint8List cScalar = Uint8List.fromList([
-        0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      ]);
-
-      Uint8List neutralBytes = Uint8List.fromList([
+      var neutralBytes = Uint8List.fromList([
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -109,14 +102,13 @@ void main() {
       ]);
 
 
-      var point1, point2, bPoint, miscPoint, miscnegPoint = ExtendedGroupElement();
+      var point1, point2, bPoint, miscnegPoint = ExtendedGroupElement();
 
       bPoint = ExtendedGroupElement.fromBytesNeg(bBytes);
       expect(bPoint != null, isTrue);
       miscnegPoint = ExtendedGroupElement.fromBytesNeg(miscBytes);
       expect(miscnegPoint != null, isTrue);
       bPoint = bPoint.neg();
-      miscPoint = miscnegPoint.neg();
 
       point1 = ExtendedGroupElement.scalarMultBase(qScalar);
       point2 = ExtendedGroupElement().scalarMult(qScalar, bPoint);
@@ -126,15 +118,13 @@ void main() {
       expect(ListEquality().equals(output1, neutralBytes), isTrue);
       expect(ListEquality().equals(output2, output1), isTrue);
 
-//      if (ge_isneutral(point1 ) != 1 && ge_isneutral(point2)==1 && ge_isneutral(B_point) != 0)
-//      throw new AssertionError("Ge Scalar Multiplaction Failed!");
     });
 
   });
 
-  group("Curve25519", () {
+  group('Curve25519', () {
 
-    test("verify", (){
+    test('verify', (){
       var aliceIdentityPrivate = Int8List.fromList([
         0xc0, 0x97, 0x24, 0x84, 0x12,
         0xe5, 0x8b, 0xf0, 0x5d, 0xf4,
@@ -190,7 +180,7 @@ void main() {
       }
     });
 
-    test("signature", () {
+    test('signature', () {
       var keyPair = Curve25519().newKeyPair();
       var message1 = Uint8List(32);
       var message2 = Uint8List(32);
@@ -200,7 +190,7 @@ void main() {
       expect(!Curve25519().verify(message2, signature), isTrue);
     });
     
-    test("agreement", () {
+    test('agreement', () {
       var alicePublic  = Int8List.fromList([
          0x1b,  0xb7,  0x59,  0x66,
          0xf2,  0xe9,  0x3a,  0x36,  0x91,
@@ -255,7 +245,7 @@ void main() {
       expect(ListEquality().equals(shared, Int8List.fromList(sharedTwo)), isTrue);
     });
 
-    test("VRFSigs", () {
+    test('VRFSigs', () {
       var keyPair = Curve25519().newKeyPair();
 
       var message1 = Uint8List(32);
@@ -267,7 +257,7 @@ void main() {
       expect(!Curve25519().verify(message2, signature), isTrue);
     });
 
-    test("largeSignatures", () {
+    test('largeSignatures', () {
       var message1 = Uint8List(1024*1024);
       var message2 = Uint8List(1048576);
       var message3 = Uint8List(1048576+1);
