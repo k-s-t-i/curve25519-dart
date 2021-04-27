@@ -1,14 +1,14 @@
 name: curve25519_vrf
-version: 1.5.0
+version: 2.0.0
 description:
   Curve25519 Library for cryptographic signing and verifying. Supports VRF signatures and agreements.
 repository: https://github.com/k-s-t-i/curve25519-dart
 
 environment:
-  sdk: '>=2.8.1 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  pointycastle: ^1.0.2
+  pointycastle: ^3.0.1
   collection: ^1.14.13
 
 dev_dependencies:
