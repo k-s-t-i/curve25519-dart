@@ -1,5 +1,5 @@
 name: curve25519_vrf
-version: 2.0.0
+version: 2.0.1
 description:
   Curve25519 Library for cryptographic signing and verifying. Supports VRF signatures and agreements.
 repository: https://github.com/k-s-t-i/curve25519-dart

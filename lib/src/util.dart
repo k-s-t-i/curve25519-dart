@@ -3,53 +3,46 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:curve25519_vrf/curve25519_vrf.dart';
-import 'package:pointycastle/pointycastle.dart' hide Signature, PublicKey, PrivateKey;
+import 'package:pointycastle/pointycastle.dart'
+    hide Signature, PublicKey, PrivateKey;
 
 import 'constants.dart';
 
 /// Standard Signature (64 bits)
 /// VRF Signature (96 bits)
-enum SignatureType {
-  STANDARD,
-  VRF
-}
+enum SignatureType { STANDARD, VRF }
 
 class PublicKey {
-
   final List<int> _bytes;
 
   /// Constructor from bytes
-  PublicKey(this._bytes)
-      : assert (_bytes.length == Constants.PUBLICKEYLENGTH);
+  PublicKey(this._bytes) : assert(_bytes.length == Constants.PUBLICKEYLENGTH);
 
   /// Returns true of this == other
   @override
-  bool operator == (other) =>
+  bool operator ==(other) =>
       other is PublicKey &&
-          const ListEquality<int>().equals(_bytes, other._bytes);
+      const ListEquality<int>().equals(_bytes, other._bytes);
 
   List<int> get bytes => _bytes;
 }
 
 class PrivateKey {
-
   final List<int> _bytes;
 
   /// Constructor from bytes
-  PrivateKey(this._bytes)
-      : assert (_bytes.length == Constants.PRIVATEKEYLENGTH);
+  PrivateKey(this._bytes) : assert(_bytes.length == Constants.PRIVATEKEYLENGTH);
 
   /// Returns true of this == other
   @override
-  bool operator == (other) =>
+  bool operator ==(other) =>
       other is PublicKey &&
-          const ListEquality<int>().equals(_bytes, other.bytes);
+      const ListEquality<int>().equals(_bytes, other.bytes);
 
   List<int> get bytes => _bytes;
 }
 
 class KeyPair {
-
   final PublicKey _publicKey;
   final PrivateKey _privateKey;
 
@@ -58,10 +51,10 @@ class KeyPair {
 
   /// Returns true if PublicKey and PrivateKey equal
   @override
-  bool operator == (other) =>
+  bool operator ==(other) =>
       other is KeyPair &&
-          _publicKey == other.publicKey &&
-          _privateKey == other.privateKey;
+      _publicKey == other.publicKey &&
+      _privateKey == other.privateKey;
 
   PublicKey get publicKey => _publicKey;
 
@@ -69,7 +62,6 @@ class KeyPair {
 }
 
 class Signature {
-
   final List<int> _bytes;
   final PublicKey _publicKey;
   final SignatureType _type;
@@ -92,10 +84,10 @@ class Signature {
 
   /// Returns true if signature bytes and publicKey identical
   @override
-  bool operator == (other) =>
+  bool operator ==(other) =>
       other is Signature &&
-          const ListEquality<int?>().equals(bytes, other.bytes) &&
-          _publicKey == other.publicKey;
+      const ListEquality<int?>().equals(bytes, other.bytes) &&
+      _publicKey == other.publicKey;
 
   dynamic isValid(Uint8List message) {
     return Curve25519().verify(message, this);
@@ -104,16 +96,15 @@ class Signature {
 
 /// Sha512 Digests from PointyCastle
 class Sha512 {
-
   static late Digest _d;
 
   /// Instantiate digest scheme
-  Sha512(){
+  Sha512() {
     _d = Digest('SHA-512');
   }
 
   /// Return Uint8List digest (512 bits)
-  List<int> digest(List<int?> bytes){
+  List<int> digest(List<int?> bytes) {
     var toHash = Uint8List.fromList(bytes as List<int>);
     var b = _d.process(toHash);
     var hash = List<int>.generate(
@@ -130,24 +121,20 @@ class Sha512 {
     }
     return hash;
   }
-
 }
 
 class Rand {
-
   final maxBytes = 256;
-  final maxInt = 2^32-1;
+  final maxInt = 2 ^ 32 - 1;
   Rand();
 
   /// random byte array of length
   List<int> randomBytes(int length) {
-
     var random = Random.secure();
 
     var randBytes = Int8List(length);
 
-    for (var i = 0; i < length; i++){
-
+    for (var i = 0; i < length; i++) {
       var next = random.nextInt(maxBytes);
       if (next > 127) {
         next = next - 256;
@@ -161,6 +148,7 @@ class Rand {
   /// random int array of length
   Int32List randomInt(int length) {
     var random = Random.secure();
-    return Int32List.fromList(List<int>.generate(length, (i) => random.nextInt(maxInt)));
+    return Int32List.fromList(
+        List<int>.generate(length, (i) => random.nextInt(maxInt)));
   }
 }
