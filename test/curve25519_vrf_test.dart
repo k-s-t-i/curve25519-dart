@@ -20,8 +20,8 @@ void main() {
 
   group('FieldElement', () {
 
-    FieldElement a;
-    FieldElement b;
+    late FieldElement a;
+    late FieldElement b;
 
     setUp(() {
       a = FieldElement();
@@ -50,7 +50,11 @@ void main() {
     });
 
     test('fromBytes', () {
-      var bytes = List<int>(32)..fillRange(0, 32, 0);
+      var bytes = List<int>.generate(
+        32,
+        (_) => 0,
+        growable: false,
+      )..fillRange(0, 32, 0);
       var fe = FieldElement.fromBytes(bytes);
       assert(fe.isZero, isTrue);
 
@@ -102,7 +106,7 @@ void main() {
       ]);
 
 
-      var point1, point2, bPoint, miscnegPoint = ExtendedGroupElement();
+      dynamic point1, point2, bPoint, miscnegPoint = ExtendedGroupElement();
 
       bPoint = ExtendedGroupElement.fromBytesNeg(bBytes);
       expect(bPoint != null, isTrue);
@@ -168,14 +172,22 @@ void main() {
         0x60, 0xb8, 0x6e, 0x88]);
 
       var aliceKeyPair = KeyPair(PublicKey(aliceIdentityPublic), PrivateKey(aliceIdentityPrivate));
-      var aliceSignature = Signature(aliceSig, aliceKeyPair.publicKey, SignatureType.STANDARD);
+      var aliceSignature = Signature(
+          bytes: aliceSig,
+          publicKey: aliceKeyPair.publicKey,
+          type: SignatureType.STANDARD
+      );
 
       expect(Curve25519().verify(aliceEphemeralPublic, aliceSignature), isTrue);
 
       for (var i=0;i<aliceSignature.bytes.length;i++) {
         var modifiedSig = List<int>.from(aliceSignature.bytes);
         modifiedSig[i] ^= 0x01;
-        var modifiedSignature = Signature(modifiedSig, aliceKeyPair.publicKey, SignatureType.STANDARD);
+        var modifiedSignature = Signature(
+            bytes: modifiedSig,
+            publicKey: aliceKeyPair.publicKey,
+            type: SignatureType.STANDARD
+        );
         expect(!Curve25519().verify(aliceEphemeralPublic, modifiedSignature), isTrue);
       }
     });

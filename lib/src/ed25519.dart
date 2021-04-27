@@ -21,54 +21,54 @@ class FieldElement extends UnmodifiableInt32ListView {
   /// New FieldElement from 32 byte array
   factory FieldElement.fromBytes(List<int> bytes){
 
-    var h0 = (bytes[0]) & 0xFF;
-    h0 |= ((bytes[1]) << 8) & 0xFF00;
-    h0 |= ((bytes[2]) << 16) & 0xFF0000;
-    h0 |= ((bytes[3]) << 24) & 0xFF000000;
+    var h0 = bytes[0] & 0xFF;
+    h0 |= (bytes[1] << 8) & 0xFF00;
+    h0 |= (bytes[2] << 16) & 0xFF0000;
+    h0 |= (bytes[3] << 24) & 0xFF000000;
 
-    var h1 = (bytes[4 + 0]) & 0xFF;
-    h1 |= ((bytes[4 + 1]) << 8) & 0xFF00;
-    h1 |= ((bytes[4 + 2]) << 16) & 0xFF0000;
+    var h1 = bytes[4 + 0] & 0xFF;
+    h1 |= (bytes[4 + 1] << 8) & 0xFF00;
+    h1 |= (bytes[4 + 2] << 16) & 0xFF0000;
     h1 <<= 6;
 
-    var h2 = (bytes[7 + 0]) & 0xFF;
-    h2 |= ((bytes[7 + 1]) << 8) & 0xFF00;
-    h2 |= ((bytes[7 + 2]) << 16) & 0xFF0000;
+    var h2 = bytes[7 + 0] & 0xFF;
+    h2 |= (bytes[7 + 1] << 8) & 0xFF00;
+    h2 |= (bytes[7 + 2] << 16) & 0xFF0000;
     h2 <<= 5;
 
-    var h3 = (bytes[10 + 0]) & 0xFF;
-    h3 |= ((bytes[10 + 1]) << 8) & 0xFF00;
-    h3 |= ((bytes[10 + 2]) << 16) & 0xFF0000;
+    var h3 = bytes[10 + 0] & 0xFF;
+    h3 |= (bytes[10 + 1] << 8) & 0xFF00;
+    h3 |= (bytes[10 + 2] << 16) & 0xFF0000;
     h3 <<= 3;
 
-    var h4 = (bytes[13 + 0]) & 0xFF;
-    h4 |= ((bytes[13 + 1]) << 8) & 0xFF00;
-    h4 |= ((bytes[13 + 2]) << 16) & 0xFF0000;
+    var h4 = bytes[13 + 0] & 0xFF;
+    h4 |= (bytes[13 + 1] << 8) & 0xFF00;
+    h4 |= (bytes[13 + 2] << 16) & 0xFF0000;
     h4 <<= 2;
 
-    var h5 = (bytes[16 + 0]) & 0xFF;
-    h5 |= ((bytes[16 + 1]) << 8) & 0xFF00;
-    h5 |= ((bytes[16 + 2]) << 16) & 0xFF0000;
-    h5 |= ((bytes[16 + 3]) << 24) & 0xFF000000;
+    var h5 = bytes[16 + 0] & 0xFF;
+    h5 |= (bytes[16 + 1] << 8) & 0xFF00;
+    h5 |= (bytes[16 + 2] << 16) & 0xFF0000;
+    h5 |= (bytes[16 + 3] << 24) & 0xFF000000;
 
-    var h6 = (bytes[20 + 0]) & 0xFF;
-    h6 |= ((bytes[20 + 1]) << 8) & 0xFF00;
-    h6 |= ((bytes[20 + 2]) << 16) & 0xFF0000;
+    var h6 = bytes[20 + 0] & 0xFF;
+    h6 |= (bytes[20 + 1] << 8) & 0xFF00;
+    h6 |= (bytes[20 + 2] << 16) & 0xFF0000;
     h6 <<= 7;
 
-    var h7 = (bytes[23 + 0]) & 0xFF;
-    h7 |= ((bytes[23 + 1]) << 8) & 0xFF00;
-    h7 |= ((bytes[23 + 2]) << 16) & 0xFF0000;
+    var h7 = bytes[23 + 0] & 0xFF;
+    h7 |= (bytes[23 + 1] << 8) & 0xFF00;
+    h7 |= (bytes[23 + 2] << 16) & 0xFF0000;
     h7 <<= 5;
 
-    var h8 = (bytes[26 + 0]) & 0xFF;
-    h8 |= ((bytes[26 + 1]) << 8) & 0xFF00;
-    h8 |= ((bytes[26 + 2]) << 16) & 0xFF0000;
+    var h8 = bytes[26 + 0] & 0xFF;
+    h8 |= (bytes[26 + 1] << 8) & 0xFF00;
+    h8 |= (bytes[26 + 2] << 16) & 0xFF0000;
     h8 <<= 4;
 
-    var h9 = (bytes[29 + 0]) & 0xFF;
-    h9 |= ((bytes[29 + 1]) << 8) & 0xFF00;
-    h9 |= ((bytes[29 + 2]) << 16) & 0xFF0000;
+    var h9 = bytes[29 + 0] & 0xFF;
+    h9 |= (bytes[29 + 1] << 8) & 0xFF00;
+    h9 |= (bytes[29 + 2] << 16) & 0xFF0000;
     h9 = h9 & 8388607;
     h9 <<= 2;
 
@@ -93,7 +93,7 @@ class FieldElement extends UnmodifiableInt32ListView {
 
   Int32List _data;
 
-  FieldElement([Int32List data])
+  FieldElement([Int32List? data])
     : _data = data ?? Int32List(10),
       assert(data == null || (data != null && data.length == 10)),
       super(data ?? Int32List(10));
@@ -139,7 +139,7 @@ class FieldElement extends UnmodifiableInt32ListView {
     assert(other is FieldElement);
     var data = Int64List(10);
     for (var i = 0; i < 10; i++){
-      data[i] = _data[i] - other[i];
+      data[i] = _data[i] - other[i] as int;
     }
     return FieldElement(Int32List.fromList(data));
   }
@@ -314,16 +314,16 @@ class FieldElement extends UnmodifiableInt32ListView {
     carry0 = ((h0 + (1<<25)) as int) >> 26; h1 += carry0; h0 -= carry0 << 26;
 
     var h = FieldElement();
-    h[0] = h0;
-    h[1] = h1;
-    h[2] = h2;
-    h[3] = h3;
-    h[4] = h4;
-    h[5] = h5;
-    h[6] = h6;
-    h[7] = h7;
-    h[8] = h8;
-    h[9] = h9;
+    h[0] = h0 as int;
+    h[1] = h1 as int;
+    h[2] = h2 as int;
+    h[3] = h3 as int;
+    h[4] = h4 as int;
+    h[5] = h5 as int;
+    h[6] = h6 as int;
+    h[7] = h7 as int;
+    h[8] = h8 as int;
+    h[9] = h9 as int;
 
     return h;
   }
@@ -380,9 +380,14 @@ class FieldElement extends UnmodifiableInt32ListView {
   /// Replace (f,g) with (g,g) if b == 1;
   /// replace (f,g) with (f,g) if b == 0.
   void cmov(FieldElement a, int b) {
-    var c = FieldElement();
-    var x = List<int>(10);
-
+    // var c = FieldElement();
+    var x = List<int>.generate(
+        10,
+        (_) {
+          return 0;
+        },
+        growable: false
+    );
     b = -b;
 
     for(var i = 0; i < 10; i++) {
@@ -393,7 +398,13 @@ class FieldElement extends UnmodifiableInt32ListView {
 
   /// swap a, b if b == 1
   void cswap(FieldElement a, int b){
-    var x = List<int>(10);
+    var x = List<int>.generate(
+        10,
+            (_) {
+          return 0;
+        },
+        growable: false
+    );
     var f = List<int>.from(_data);
     var g = List<int>.from(a);
     b = -b;
@@ -415,7 +426,7 @@ class FieldElement extends UnmodifiableInt32ListView {
         t2 = FieldElement(), t3 = FieldElement();
     var i = 0;
 
-    t0 = this.square();
+    t0 = square();
     t1 = t0.square(); t1 = t1.square();
     t1 = this  * t1;
     t0 = t0 * t1;
@@ -504,47 +515,80 @@ class FieldElement extends UnmodifiableInt32ListView {
 
     var out = FieldElement(this);
 
-    var t0 = out.square(); for (var i = 1;i < 1;++i) t0 = t0.square();
+    var t0 = out.square();
+    for (var i = 1;i < 1;++i) {
+      t0 = t0.square();
+    }
 
-    var t1 = t0.square(); for (var i = 1;i < 2;++i) t1 = t1.square();
+    var t1 = t0.square();
+    for (var i = 1;i < 2;++i) {
+      t1 = t1.square();
+    }
 
     t1 = this * t1;
 
     t0 = t0 * t1;
 
-    t0 = t0.square(); for (var i = 1;i < 1;++i) t0 = t0.square();
+    t0 = t0.square();
+    for (var i = 1;i < 1;++i) {
+      t0 = t0.square();
+    }
 
     t0 = t1 * t0;
 
-    t1 = t0.square(); for (var i = 1;i < 5;++i) t1 = t1.square();
+    t1 = t0.square();
+    for (var i = 1;i < 5;++i) {
+      t1 = t1.square();
+    }
 
     t0 = t1 * t0;
 
-    t1 = t0.square(); for (var i = 1;i < 10;++i) t1 = t1.square();
+    t1 = t0.square();
+    for (var i = 1;i < 10;++i) {
+      t1 = t1.square();
+    }
 
     t1 = t1 * t0;
 
-    var t2 = t1.square(); for (var i = 1;i < 20;++i) t2 = t2.square();
+    var t2 = t1.square();
+    for (var i = 1;i < 20;++i) {
+      t2 = t2.square();
+    }
 
     t1 = t2 * t1;
 
-    t1 = t1.square(); for (var i = 1;i < 10;++i) t1 = t1.square();
+    t1 = t1.square();
+    for (var i = 1;i < 10;++i) {
+      t1 = t1.square();
+    }
 
     t0 = t1 * t0;
 
-    t1 = t0.square(); for (var i = 1;i < 50;++i) t1 = t1.square();
+    t1 = t0.square();
+    for (var i = 1;i < 50;++i) {
+      t1 = t1.square();
+    }
 
     t1 = t1 * t0;
 
-    t2 = t1.square(); for (var i = 1;i < 100;++i) t2 = t2.square();
+    t2 = t1.square();
+    for (var i = 1;i < 100;++i) {
+      t2 = t2.square();
+    }
 
     t1 = t2 * t1;
 
-    t1 = t1.square(); for (var i = 1;i < 50;++i) t1 = t1.square();
+    t1 = t1.square();
+    for (var i = 1;i < 50;++i) {
+      t1 = t1.square();
+    }
 
     t0 = t1 * t0;
 
-    t0 = t0.square(); for (var i = 1;i < 2;++i) t0 = t0.square();
+    t0 = t0.square();
+    for (var i = 1;i < 2;++i) {
+      t0 = t0.square();
+    }
 
     out = t0 * out;
 
@@ -641,16 +685,16 @@ class FieldElement extends UnmodifiableInt32ListView {
     var h7 = f0f7_2+f1f6_2 +f2f5_2 +f3f4_2 +f8f9_38;
     var h8 = f0f8_2+f1f7_4 +f2f6_2 +f3f5_4 +f4f4   +f9f9_38;
     var h9 = f0f9_2+f1f8_2 +f2f7_2 +f3f6_2 +f4f5_2;
-    var carry0;
-    var carry1;
-    var carry2;
-    var carry3;
-    var carry4;
-    var carry5;
-    var carry6;
-    var carry7;
-    var carry8;
-    var carry9;
+    int carry0;
+    int carry1;
+    int carry2;
+    int carry3;
+    int carry4;
+    int carry5;
+    int carry6;
+    int carry7;
+    int carry8;
+    int carry9;
 
     carry0 = (h0 + (1<<25)) >> 26; h1 += carry0; h0 -= carry0 << 26;
     carry4 = (h4 + (1<<25)) >> 26; h5 += carry4; h4 -= carry4 << 26;
@@ -825,7 +869,7 @@ class FieldElement extends UnmodifiableInt32ListView {
 
   /// Square root
   /// return null if error
-  FieldElement sqrt() {
+  FieldElement? sqrt() {
     var out = FieldElement();
     var i = FieldElement.fromBytes(Constants.iBytes);
 
@@ -879,13 +923,18 @@ class FieldElement extends UnmodifiableInt32ListView {
 
     a[0] += 19 * q;
 
-    var carry = List<int>(10);
+    var carry = List<int>.generate(
+      10,
+      (_) => 0,
+      growable: false,
+    );
 
     for (var i = 0; i < 10; i++){
       if (i % 2 == 1){
         carry[i] = a[i] >> 25;
-        if (i<9)
+        if (i<9) {
           a[i+1] += carry[i];
+        }
         a[i] -= carry[i] << 25;
         continue;
       }
@@ -971,7 +1020,7 @@ class FieldElement extends UnmodifiableInt32ListView {
     var y = toEdY();
 
     var v2 = montRHS();
-    var v = v2.sqrt();
+    var v = v2.sqrt()!;
     var x = A * this;
     var iv = v.invert();
     x = x * iv;
@@ -1003,7 +1052,7 @@ class ProjectiveGroupElement {
 
   FieldElement X, Y, Z;
 
-  ProjectiveGroupElement([FieldElement X, FieldElement Y, FieldElement Z])
+  ProjectiveGroupElement([FieldElement? X, FieldElement? Y, FieldElement? Z])
       : X = X ?? FieldElement(),
         Y = Y ?? FieldElement(),
         Z = Z ?? FieldElement();
@@ -1013,7 +1062,11 @@ class ProjectiveGroupElement {
 
     var out = ProjectiveGroupElement.zero();
 
-    var Ai = List<CachedGroupElement>(8);
+    var Ai = List<CachedGroupElement>.generate(
+      8,
+      (_) => CachedGroupElement.zero(),
+      growable: false,
+    );
     for (var count=0; count < 8; count++) {
       Ai[count] = CachedGroupElement();
     }
@@ -1149,14 +1202,14 @@ class ExtendedGroupElement {
 
   FieldElement X, Y, Z, T;
 
-  ExtendedGroupElement([FieldElement X, FieldElement Y, FieldElement Z, FieldElement T])
+  ExtendedGroupElement([FieldElement? X, FieldElement? Y, FieldElement? Z, FieldElement? T])
       : X = X ?? FieldElement(),
         Y = Y ?? FieldElement(),
         Z = Z ?? FieldElement(),
         T = T ?? FieldElement();
 
   /// Instantiate from Bytes and Negate
-  factory ExtendedGroupElement.fromBytesNeg(List<int> bytes) {
+  static ExtendedGroupElement? fromBytesNeg(List<int> bytes) {
 
     var out = ExtendedGroupElement();
 
@@ -1342,7 +1395,7 @@ class ExtendedGroupElement {
 
     s[31] ^= isNeg << 7;
 
-    return s;
+    return s as Int8List;
   }
 
   /// Extended GE to Cached GE
@@ -1363,7 +1416,7 @@ class ExtendedGroupElement {
   }
 
   /// Multiply Scalar a with Extended GE A and store in Extended GE
-  ExtendedGroupElement scalarMult(List<int> a, ExtendedGroupElement A) {
+  ExtendedGroupElement scalarMult(List<int?> a, ExtendedGroupElement A) {
 
     var q = ExtendedGroupElement.zero();
     var p = ExtendedGroupElement();
@@ -1380,7 +1433,7 @@ class ExtendedGroupElement {
     var bit = 0;
 
     for (var i=0; i<256; i++){
-      bit = ((a[i>>3]>>(i&7)) & 1);
+      bit = ((a[i>>3]!>>(i&7)) & 1);
 
       c = q.toCached();
       t0 = p + c;
@@ -1429,7 +1482,7 @@ class CompletedGroupElement {
 
   FieldElement X, Y, Z, T;
 
-  CompletedGroupElement([FieldElement X, FieldElement Y, FieldElement Z, FieldElement T])
+  CompletedGroupElement([FieldElement? X, FieldElement? Y, FieldElement? Z, FieldElement? T])
       : X = X ?? FieldElement(),
         Y = Y ?? FieldElement(),
         Z = Z ?? FieldElement(),
@@ -1508,7 +1561,7 @@ class PreComputedGroupElement {
 
   FieldElement yPlusX, yMinusX, xy2d;
 
-  PreComputedGroupElement([FieldElement yPlusX, FieldElement yMinusX, FieldElement xy2d])
+  PreComputedGroupElement([FieldElement? yPlusX, FieldElement? yMinusX, FieldElement? xy2d])
       : yPlusX  = yPlusX  ?? FieldElement(),
         yMinusX = yMinusX ?? FieldElement(),
         xy2d    = xy2d    ?? FieldElement();
@@ -1562,7 +1615,7 @@ class CachedGroupElement {
 
   FieldElement yPlusX, yMinusX, Z, T2d;
 
-  CachedGroupElement([FieldElement yPlusX, FieldElement yMinusX, FieldElement Z, FieldElement T2d])
+  CachedGroupElement([FieldElement? yPlusX, FieldElement? yMinusX, FieldElement? Z, FieldElement? T2d])
       : yPlusX  = yPlusX  ?? FieldElement(),
         yMinusX = yMinusX ?? FieldElement(),
         Z = Z ?? FieldElement(),
@@ -1585,11 +1638,11 @@ class CachedGroupElement {
 class Scalar extends UnmodifiableInt8ListView {
 
   Int8List _data;
-  int _length;
+  final int _length;
 
   Int8List get data => _data;
 
-  Scalar([List<int> list, int length]) :
+  Scalar([List<int>? list, int? length]) :
         _data = Int8List.fromList(list ?? Int8List(64)),
         _length = length ?? 64,
         super(Int8List.fromList(list ?? Int8List(64)));
@@ -1930,8 +1983,16 @@ class Scalar extends UnmodifiableInt8ListView {
     cCopy[10] = 2097151 & (load3(cCopy, 26) >> 2);
     cCopy[11] =           (load4(cCopy, 28) >> 7);
 
-    var s     = List<int>(24);
-    var carry = List<int>(24);
+    var s     = List<int>.generate(
+      24,
+      (_) => 0,
+      growable: false,
+    );
+    var carry = List<int>.generate(
+      24,
+      (_) => 0,
+      growable: false,
+    );
 
     s[0]  = cCopy[0]  + aCopy[0]*bCopy[0];
     s[1]  = cCopy[1]  + aCopy[0]*bCopy[1]  + aCopy[1]*bCopy[0];
@@ -2148,7 +2209,11 @@ class Scalar extends UnmodifiableInt8ListView {
     carry[10] = s[10] >> 21; s[11] += carry[10]; s[10] -= carry[10] << 21;
 
 
-    var out = List<int>(32);
+    var out = List<int>.generate(
+      32,
+      (_) => 0,
+      growable: false,
+    );
 
     out[0]  = (s[0] >> 0);
     out[1]  = (s[0] >> 8);
@@ -2191,7 +2256,11 @@ class Scalar extends UnmodifiableInt8ListView {
 
     var n = List<int>.from(_data);
     var i = 0;
-    var e = List<int>(32);
+    var e = List<int>.generate(
+      32,
+      (_) => 0,
+      growable: false,
+    );
 
     for (i = 0;i < 32;++i) {
       e[i] = n[i];
@@ -2236,7 +2305,7 @@ class Scalar extends UnmodifiableInt8ListView {
     z2.cswap(z3, swap);
     z2 = z2.invert();
     x2 = x2 * z2;
-    return x2.toBytes();
+    return x2.toBytes() as Int8List;
   }
 
   /// negate Scalar
@@ -2247,33 +2316,42 @@ class Scalar extends UnmodifiableInt8ListView {
 
   /// Check if Scalar information lost during reduction to 512 bits
   bool isReduced() {
-    var strict = List<int>(64);
+    var strict = List<int>.generate(
+      64,
+      (_) => 0,
+      growable: false,
+    );
     strict.fillRange(0, 64, 0);
     List.copyRange(strict, 0, _data, 0, 32);
 
     strict = Scalar(strict).reduction();
 
-    if (ListEquality<int>().equals(strict, _data))
+    if (ListEquality<int>().equals(strict, _data)) {
       return false;
+    }
     return true;
   }
 }
 
 class Labelset {
 
-  List<int> _data;
-  int _length;
+  late List<int> _data;
+  late int _length;
 
   /// new Labelset using emoty customization label and protocol name
   Labelset() {
-    var protocolname = Int8List.fromList("VEdDSA_25519_SHA512_Elligator2".codeUnits);
+    var protocolName = Int8List.fromList('VEdDSA_25519_SHA512_Elligator2'.codeUnits);
 
-    _data = List<int>(3 + protocolname.length);
+    _data = List<int>.generate(
+        3 + protocolName.length,
+        (_) => 0,
+        growable: false,
+    );
     _data[0] = 2;
-    _data[1] = protocolname.length;
-    List.copyRange(_data, 2, protocolname);
+    _data[1] = protocolName.length;
+    List.copyRange(_data, 2, protocolName);
     _data[_data.length-1] = 0;
-    _length = 3 + protocolname.length;
+    _length = 3 + protocolName.length;
   }
 
   List<int> get data => _data;
@@ -2284,7 +2362,11 @@ class Labelset {
     if (_length + label.length + 1 > Constants.LABELSETMAXLEN || label.length > Constants.LABELMAXLEN) {
       return -1;
     }
-    var newData = List<int>(_length + label.length + 1);
+    var newData = List<int>.generate(
+        _length + label.length + 1,
+        (_) => 0,
+        growable: false,
+    );
 
     for (var i = 0; i < newData.length; i++) {
       if (i < pos) {
@@ -2305,10 +2387,7 @@ class Labelset {
 
   /// check if labelset valid
   bool validate() {
-
-    if (_data == null) {
-      return false;
-    }
+    
     if (_length < 3 || _length > Constants.LABELSETMAXLEN){
       return false;
     }

@@ -20,8 +20,7 @@ class PublicKey {
 
   /// Constructor from bytes
   PublicKey(this._bytes)
-      : assert(_bytes != null),
-        assert (_bytes.length == Constants.PUBLICKEYLENGTH);
+      : assert (_bytes.length == Constants.PUBLICKEYLENGTH);
 
   /// Returns true of this == other
   @override
@@ -38,8 +37,7 @@ class PrivateKey {
 
   /// Constructor from bytes
   PrivateKey(this._bytes)
-      : assert(_bytes != null),
-        assert (_bytes.length == Constants.PRIVATEKEYLENGTH);
+      : assert (_bytes.length == Constants.PRIVATEKEYLENGTH);
 
   /// Returns true of this == other
   @override
@@ -56,9 +54,7 @@ class KeyPair {
   final PrivateKey _privateKey;
 
   /// Constructor from PublicKey and PrivateKey objects
-  KeyPair(this._publicKey, this._privateKey)
-      : assert(_publicKey != null),
-        assert(_privateKey != null);
+  KeyPair(this._publicKey, this._privateKey);
 
   /// Returns true if PublicKey and PrivateKey equal
   @override
@@ -80,15 +76,15 @@ class Signature {
 
   /// Constructor from Bytes and Signing PublicKey
   /// Does not store message
-  const Signature([List<int> bytes, PublicKey publicKey, SignatureType type])
-      : assert(bytes != null),
-        assert(publicKey != null),
-        assert(type != null),
-        _bytes = bytes,
+  const Signature({
+    required List<int> bytes,
+    required PublicKey publicKey,
+    required SignatureType type,
+  })  : _bytes = bytes,
         _publicKey = publicKey,
         _type = type;
 
-  List<int> get bytes => _bytes;
+  List<int?> get bytes => _bytes;
 
   PublicKey get publicKey => _publicKey;
 
@@ -98,7 +94,7 @@ class Signature {
   @override
   bool operator == (other) =>
       other is Signature &&
-          const ListEquality<int>().equals(bytes, other.bytes) &&
+          const ListEquality<int?>().equals(bytes, other.bytes) &&
           _publicKey == other.publicKey;
 
   dynamic isValid(Uint8List message) {
@@ -109,7 +105,7 @@ class Signature {
 /// Sha512 Digests from PointyCastle
 class Sha512 {
 
-  static Digest _d;
+  static late Digest _d;
 
   /// Instantiate digest scheme
   Sha512(){
@@ -117,10 +113,14 @@ class Sha512 {
   }
 
   /// Return Uint8List digest (512 bits)
-  List<int> digest(List<int> bytes){
-    var toHash = Uint8List.fromList(bytes);
+  List<int> digest(List<int?> bytes){
+    var toHash = Uint8List.fromList(bytes as List<int>);
     var b = _d.process(toHash);
-    var hash = List<int>(b.length);
+    var hash = List<int>.generate(
+      b.length,
+      (_) => 0,
+      growable: false,
+    );
     for (var i = 0; i < b.length; i++) {
       var add = b[i];
       if (add > 127) {

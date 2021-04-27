@@ -44,14 +44,8 @@ class Curve25519 {
   /// Sign byte message message using keyPair
   Signature sign(KeyPair keyPair, Uint8List message, SignatureType type) {
     var messageBytes = Int8List.fromList(message);
-    if (keyPair == null) {
-      throw Exception('KeyPair Invalid!');
-    }
-    if (messageBytes == null || messageBytes.isEmpty) {
+    if (messageBytes.isEmpty) {
       throw Exception('Message Invalid!');
-    }
-    if (type == null) {
-      throw Exception('Signature Type Invalid');
     }
     if (type == SignatureType.STANDARD) {
       var signature = _signStandard(keyPair, messageBytes);
@@ -78,10 +72,7 @@ class Curve25519 {
   /// VRF output byte array if true for VRF SignatureType
   dynamic verify(Uint8List message, Signature signature) {
     var messageBytes = Int8List.fromList(message);
-    if (signature.publicKey == null) {
-      throw Exception('Public Key is invalid!');
-    }
-    if (messageBytes == null || messageBytes.isEmpty) {
+    if (messageBytes.isEmpty) {
       return false;
     }
     if (signature.type == SignatureType.STANDARD) {
@@ -93,10 +84,18 @@ class Curve25519 {
     return false;
   }
 
-  Signature _signStandard(KeyPair keyPair, List<int> message) {
+  Signature? _signStandard(KeyPair keyPair, List<int> message) {
     var pubKeyPoint = ExtendedGroupElement();
-    var edPubKey = List<int>(32);
-    var sigBuffer = List<int>(message.length + 128);
+    var edPubKey = List<int>.generate(
+      32,
+      (_) => 0,
+      growable: false,
+    );
+    var sigBuffer = List<int>.generate(
+      message.length + 128,
+      (_) => 0,
+      growable: false,
+    );
     var signBit = 0;
 
     if (message.length > Constants.MSGMAXLEN) {
@@ -136,7 +135,11 @@ class Curve25519 {
     sigBuffer[63] &= 0x7F;
     sigBuffer[63] |= signBit;
 
-    return Signature(sigBuffer.sublist(0, 64), keyPair.publicKey, SignatureType.STANDARD);
+    return Signature(
+        bytes: sigBuffer.sublist(0, 64),
+        publicKey: keyPair.publicKey,
+        type: SignatureType.STANDARD
+    );
   }
 
   bool _verifyStandard(PublicKey publicKey, List<int> message, Signature signature) {
@@ -152,9 +155,17 @@ class Curve25519 {
     var edPubKey = edY.toBytes();
 
     edPubKey[31] &= 0x7F;  /* bit should be zero already, but just in case */
-    edPubKey[31] |= (signature.bytes[63] & 0x80);
-    var verifyBuffer1 = List<int>(message.length + 64);
-    var verifyBuffer2 = List<int>(message.length + 64);
+    edPubKey[31] |= (signature.bytes[63]! & 0x80);
+    var verifyBuffer1 = List<int>.generate(
+      message.length + 64,
+      (_) => 0,
+      growable: false,
+    );
+    var verifyBuffer2 = List<int>.generate(
+      message.length + 64,
+      (_) => 0,
+      growable: false,
+    );
 
     List.copyRange(verifyBuffer1, 0, signature.bytes.sublist(0, 64));
     verifyBuffer1[63] &= 0x7F;
@@ -191,7 +202,7 @@ class Curve25519 {
     return true;
   }
 
-  Signature _signVRF(KeyPair keyPair, List<int> message) {
+  Signature? _signVRF(KeyPair keyPair, List<int> message) {
 
     if (message.length > Constants.MSGMAXLEN) {
       return null;
@@ -235,7 +246,7 @@ class Curve25519 {
     var Rv = ExtendedGroupElement().scalarMult(rScalar, Bv);
     var rvBytes = Rv.toBytes();
 
-    labelset.set(labelset.length-1, 3);
+    labelset.set(labelset.length - 1, 3);
     List.copyRange(extra, 2 * Constants.POINTLEN, rvBytes);
 
     var hScalar = _challenge(labelset, extra, extra.length, rBytes, curve25519KeyPair.publicKey.bytes, mBuf);
@@ -243,28 +254,52 @@ class Curve25519 {
       return null;
     }
 
-    var sScalar = _prove(rScalar, curve25519KeyPair.privateKey.bytes, hScalar);
+    var sScalar = _prove(rScalar, curve25519KeyPair.privateKey.bytes, hScalar as List<int>);
 
-    var signatureBytes = List<int>(96);
+    var signatureBytes = List<int>.generate(
+      96,
+      (_) => 0,
+      growable: false,
+    );
 
     List.copyRange(signatureBytes, 0, kvBytes);
     List.copyRange(signatureBytes, Constants.POINTLEN, hScalar);
     List.copyRange(signatureBytes, Constants.POINTLEN + Constants.SCALARLEN, sScalar);
 
-    return Signature(signatureBytes, keyPair.publicKey, SignatureType.VRF);
+    return Signature(
+        bytes: signatureBytes,
+        publicKey: keyPair.publicKey,
+        type: SignatureType.VRF
+    );
   }
 
   dynamic _verifyVRF(PublicKey publicKey, List<int> message, Signature signature){
 
-    var edPublicKey = _convertPublicKey(publicKey);
+    var edPublicKey = _convertPublicKey(publicKey)!;
 
-    var mBuf = List<int>(Constants.MSTART + message.length)..fillRange(0, Constants.MSTART + message.length, 0);
+    var mBuf = List<int>.generate(
+      Constants.MSTART + message.length,
+      (_) => 0,
+      growable: false,
+    )..fillRange(0, Constants.MSTART + message.length, 0);
 
     List.copyRange(mBuf, Constants.MSTART, message);
 
-    var kvBytes = List<int>(Constants.POINTLEN);
-    var hScalar = List<int>(Constants.SCALARLEN);
-    var sScalar = List<int>(Constants.SCALARLEN);
+    var kvBytes = List<int>.generate(
+      Constants.POINTLEN,
+      (_) => 0,
+      growable: false,
+    );
+    var hScalar = List<int>.generate(
+      Constants.SCALARLEN,
+      (_) => 0,
+      growable: false,
+    );
+    var sScalar = List<int>.generate(
+      Constants.SCALARLEN,
+      (_) => 0,
+      growable: false,
+    );
 
     List.copyRange(kvBytes, 0, signature.bytes, 0, Constants.POINTLEN);
     List.copyRange(hScalar, 0, signature.bytes, Constants.POINTLEN, Constants.POINTLEN + Constants.SCALARLEN);
@@ -305,7 +340,11 @@ class Curve25519 {
 
     labelset.set(labelset.length - 1, 3);
 
-    var extra = List<int>(3 * Constants.POINTLEN);
+    var extra = List<int>.generate(
+      3 * Constants.POINTLEN,
+      (_) => 0,
+      growable: false,
+    );
     List.copyRange(extra, 0, bvBytes);
     List.copyRange(extra, Constants.POINTLEN, kvBytes);
     List.copyRange(extra, 2*Constants.POINTLEN, rvCalcBytes);
@@ -315,7 +354,7 @@ class Curve25519 {
       return false;
     }
 
-    if (!ListEquality<int>().equals(hScalar, hCalcScalar)) {
+    if (!ListEquality<int?>().equals(hScalar, hCalcScalar)) {
       return false;
     }
 
@@ -325,7 +364,7 @@ class Curve25519 {
     if (out == null) {
       return false;
     }
-    return Uint8List.fromList(out);
+    return Uint8List.fromList(out as List<int>);
   }
 
   KeyPair _calculateCurveKeyPair(PrivateKey privateKey) {
@@ -344,7 +383,7 @@ class Curve25519 {
   }
 
 
-  ExtendedGroupElement _calculateBv(Labelset labelset, List<int> kBytes, List<int> mBuf, List<int> message) {
+  ExtendedGroupElement? _calculateBv(Labelset labelset, List<int> kBytes, List<int> mBuf, List<int> message) {
 
     if (!labelset.validate()) {
       return null;
@@ -372,7 +411,7 @@ class Curve25519 {
     return BvPoint;
   }
 
-  ExtendedGroupElement _hashToPoint(List<int> inBytes) {
+  ExtendedGroupElement? _hashToPoint(List<int> inBytes) {
 
     var hash = Sha512().digest(inBytes);
     var signBit = (hash[31] & 0x80) >> 7;
@@ -380,19 +419,16 @@ class Curve25519 {
     var h = FieldElement.fromBytes(hash);
     var u = _elligator(h);
     var p3 = u.montXToExtended(signBit);
-    if (p3 == null) {
-      return null;
-    }
     return p3.scalarMultCofactor();
   }
 
-  List<int> _commit(rScalar, Labelset labelset, List<int> extra, int extraLength,
+  List<int>? _commit(rScalar, Labelset labelset, List<int> extra, int extraLength,
       List<int> edPubKeyBytes, List<int> privKeyScalar, List<int> mBuf) {
 
     if (!labelset.validate()) {
       return null;
     }
-    if (rScalar == null || extra == null || mBuf == null) {
+    if (rScalar == null) {
       return null;
     }
     var prefixLength = 0;
@@ -460,12 +496,9 @@ class Curve25519 {
     return out;
   }
 
-  List<int> _challenge(Labelset labelset, List<int> extra, int extraLength, List<int> rBytes, List<int> kBytes, List<int> mBuf) {
+  List<int?>? _challenge(Labelset labelset, List<int?> extra, int extraLength, List<int> rBytes, List<int> kBytes, List<int?> mBuf) {
 
     if (!labelset.validate()) {
-      return null;
-    }
-    if (rBytes == null || kBytes == null || mBuf == null) {
       return null;
     }
     var prefixLength = 0;
@@ -502,7 +535,11 @@ class Curve25519 {
     var hash = Sha512().digest(mBuf.sublist(Constants.MSTART - prefixLength));
     hash = Scalar(hash).reduction();
 
-    var out = List<int>(Constants.SCALARLEN);
+    var out = List<int>.generate(
+      Constants.SCALARLEN,
+      (_) => 0,
+      growable: false,
+    );
     List.copyRange(out, 0, hash, 0, Constants.SCALARLEN);
     return out;
   }
@@ -512,7 +549,7 @@ class Curve25519 {
     return Scalar(hScalar).mulAdd(Scalar(kScalar), Scalar(rScalar));
   }
 
-  List<int> _convertPublicKey(PublicKey publicKey) {
+  List<int>? _convertPublicKey(PublicKey publicKey) {
 
     if (!FieldElement().isReduced(publicKey.bytes)) {
       return null;
@@ -522,14 +559,18 @@ class Curve25519 {
     return y.toBytes();
   }
 
-  bool _pointIsReduced(List<int> p) {
-    var strict = List<int>(32);
+  bool _pointIsReduced(List<int?> p) {
+    var strict = List<int>.generate(
+      32,
+      (_) => 0,
+      growable: false,
+    );
     List.copyRange(strict, 0, p);
     strict[31] &= 0x7F;
     return FieldElement().isReduced(strict);
   }
 
-  List<int> _solveCommitment(ExtendedGroupElement kPoint, ExtendedGroupElement bPoint, List<int> sScalar, List<int> kBytes, List<int> hScalar) {
+  List<int>? _solveCommitment(ExtendedGroupElement? kPoint, ExtendedGroupElement? bPoint, List<int> sScalar, List<int> kBytes, List<int> hScalar) {
 
     var kNegPoint = ExtendedGroupElement.fromBytesNeg(kBytes);
 
@@ -561,9 +602,13 @@ class Curve25519 {
     return rBytes;
   }
 
-  List<int> _calcVRFOut(Labelset labelset, ExtendedGroupElement cKv) {
+  List<int?>? _calcVRFOut(Labelset labelset, ExtendedGroupElement cKv) {
 
-    var buf = List<int>(Constants.BUFLEN)..fillRange(0, Constants.BUFLEN, 0);
+    var buf = List<int>.generate(
+      Constants.BUFLEN,
+      (_) => 0,
+      growable: false,
+    )..fillRange(0, Constants.BUFLEN, 0);
 
     if (labelset.length + 2*Constants.POINTLEN > Constants.BUFLEN) {
       return null;
@@ -585,9 +630,12 @@ class Curve25519 {
     }
     var hash = Sha512().digest(buf);
 
-    var out = List<int>(Constants.VRFOUTPUTLEN);
+    var out = List<int>.generate(
+      Constants.VRFOUTPUTLEN,
+      (_) => 0,
+      growable: false,
+    );
     List.copyRange(out, 0, hash, 0, Constants.VRFOUTPUTLEN);
-
     return out;
   }
 
